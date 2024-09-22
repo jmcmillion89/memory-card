@@ -5,7 +5,7 @@ import Results from './Results';
 
 function GameLogic() {
     const [difficulty, setDifficulty] = useState('')
-    const [score, setScore] = useState(5);
+    const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
     const [gameStarted, setGameStarted] = useState(false);
     const [gameOver, setGameOver] = useState(false);
@@ -39,11 +39,16 @@ function GameLogic() {
     }, [gameStarted])
 
     useEffect(() => {
-        switch(gameStarted, gameOver) {
-            case false:
-                setScore(1)
+        if (gameStarted === false && gameOver === false) {
+            setScore(0)
         }
-    }, [setGameStarted, setGameOver])
+    })
+
+    const restartGame = () => {
+        setGameOver(false)
+        setGameStarted(false)
+        setDifficulty('')
+    }
 
     return (
         <>
@@ -54,9 +59,12 @@ function GameLogic() {
             )}
 
             {gameStarted && !gameOver && (
+                <>
                 <div>
-                    <button onClick={() => setGameOver(true)}>Game Over</button>
+                    <button onClick={() => setScore(10)}>Set Score 10</button>
+                    <button onClick={() => restartGame()}>Game Over</button>
                 </div>
+                </>
             )}
 
             {gameOver && (
