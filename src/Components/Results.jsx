@@ -1,15 +1,11 @@
 import react, {useState} from 'react'
 
-function Results ({setGameStarted, setGameOver}) {
+function Results ({restartGame}) {
 
-    const handleClick = () => {
-        setGameStarted(false)
-        setGameOver(false)
-    }
 
   return (
     <div>
-      <button onClick={()=>handleClick()}>Play Again</button>
+      <button onClick={()=>restartGame()}>Play Again</button>
     </div>
   );
 }
