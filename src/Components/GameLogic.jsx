@@ -132,7 +132,7 @@ function GameLogic() {
                                     <img src={pokemon.image} alt={pokemon.name} />
                                 </div>
                                 <div className="card-back">
-                                    <img src="src/assets/cardback.png" alt="Pokemon Card Back" />
+                                    <img src="/cardback.png" alt="Pokemon Card Back" />
                                 </div>
                             </div>
                         </div>
