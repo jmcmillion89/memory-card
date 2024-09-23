@@ -1,68 +1,200 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* Body styling */
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: 'Press Start 2P', sans-serif; /* Use custom font */
+  background-color: #ffcb05; /* Set background color */
+  color: #333; /* Set text color */
+  text-align: center; /* Center align text */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Header styling */
+.pokemon-header {
+  background-color: #3b4cca; /* Set header background color */
+  color: #ffcb05; /* Set header text color */
+  padding: 20px; /* Add padding inside the header */
+  text-align: center; /* Center align text */
+  border-bottom: 5px solid #ffcb05; /* Add bottom border */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.pokemon-header h1 {
+  margin: 0; /* Remove margin */
+  font-size: 2em; /* Set font size */
+}
+
+/* Score container styling */
+.score-container {
+  margin-top: 10px; /* Add top margin */
+  font-size: 1.2em; /* Set font size */
+}
+
+.score-container span {
+  display: inline-block; /* Display as inline-block */
+  margin: 0 10px; /* Add horizontal margin */
+}
+
+/* Results container styling */
+.results-container {
+  background-color: #3b4cca; /* Set background color */
+  color: #ffcb05; /* Set text color */
+  padding: 20px; /* Add padding inside the container */
+  border-radius: 10px; /* Round the corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+  margin: 20px auto; /* Add vertical margin and center align */
+  width: 80%; /* Set width */
+  max-width: 400px; /* Set maximum width */
+}
+
+.results-container h2 {
+  font-size: 2em; /* Set font size */
+  margin-bottom: 20px; /* Add bottom margin */
+}
+
+.results-container p {
+  font-size: 1.2em; /* Set font size */
+  margin: 10px 0; /* Add vertical margin */
+}
+
+.results-container button {
+  background-color: #ffcb05; /* Set button background color */
+  border: none; /* Remove button border */
+  padding: 10px 20px; /* Add padding inside the button */
+  font-size: 1em; /* Set font size */
+  color: #3b4cca; /* Set button text color */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  border-radius: 5px; /* Round the button corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to the button */
+  margin-top: 20px; /* Add top margin */
+}
+
+.results-container button:hover {
+  background-color: #ffdf70; /* Change background color on hover */
+}
+
+.results-container button:active {
+  background-color: #ffcb05; /* Change background color on click */
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1); /* Change shadow on click */
+}
+
+/* Card container styling */
+.card-container {
+  display: flex; /* Use flexbox layout */
+  flex-wrap: wrap; /* Wrap flex items */
+  justify-content: center; /* Center align flex items */
+  margin-top: 20px; /* Add top margin */
+  position: relative; /* Position relative for loading text */
+}
+
+/* Card styling */
+.card {
+  width: 180px; /* Set card width */
+  height: 240px; /* Set card height */
+  perspective: 1000px; /* Set perspective for 3D effect */
+  margin: 10px; /* Add margin around the card */
+  transition: transform 0.3s ease; /* Smooth transform transition */
+}
+
+/* Hover effect for cards */
+.card:hover {
+  transform: scale(1.05); /* Scale the card slightly on hover */
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.card-inner {
+  position: relative; /* Position relative for inner elements */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  text-align: center; /* Center align text */
+  transition: transform 0.6s; /* Smooth transform transition */
+  transform-style: preserve-3d; /* Preserve 3D transform */
+  transform-origin: center; /* Transform origin at center */
+}
+
+.card.flipping .card-inner {
+  transform: rotateY(180deg); /* Rotate card on Y-axis */
+}
+
+.card-front, .card-back {
+  position: absolute; /* Absolute positioning */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  backface-visibility: hidden; /* Hide back face */
+  border: 1px solid #ccc; /* Add border */
+  border-radius: 10px; /* Round the corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.card-front {
+  background: white; /* Set background color */
+}
+
+.card-back {
+  background: white; /* Set background color */
+  transform: rotateY(180deg); /* Rotate back face */
+}
+
+.card-front img, .card-back img {
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  object-fit: cover; /* Ensure the image covers the entire card */
+  border-radius: 10px; /* Round the corners */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+}
+
+/* Shuffling animation */
+.shuffling .card-inner {
+  animation: shuffle 0.6s; /* Apply shuffle animation */
+}
+
+@keyframes shuffle {
+  0% {
+    transform: rotateY(0); /* Start at 0 degrees rotation */
   }
-  a:hover {
-    color: #747bff;
+  50% {
+    transform: rotateY(180deg); /* Rotate to 180 degrees */
   }
-  button {
-    background-color: #f9f9f9;
+  100% {
+    transform: rotateY(0); /* Rotate back to 0 degrees */
   }
+}
+
+/* Button styling */
+button {
+  background-color: #3b4cca; /* Set button background color */
+  border: none; /* Remove button border */
+  padding: 10px 20px; /* Add padding inside the button */
+  margin: 10px; /* Add margin around the button */
+  font-size: 1em; /* Set font size */
+  color: #ffcb05; /* Set button text color */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  border-radius: 5px; /* Round the button corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to the button */
+}
+
+button:hover {
+  background-color: #2a3b8f; /* Change background color on hover */
+}
+
+button:active {
+  background-color: #3b4cca; /* Change background color on click */
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1); /* Change shadow on click */
+}
+
+/* Loading text animation */
+.loading-text {
+  font-size: 1.5em; /* Set font size for loading text */
+  animation: color-change 1s infinite; /* Apply color change animation */
+  position: absolute; /* Position the loading text absolutely */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust position to be truly centered */
+}
+
+@keyframes color-change {
+  0% { color: #3b4cca; } /* Start color */
+  25% { color: #ffcb05; } /* 25% color */
+  50% { color: #ffdf70; } /* 50% color */
+  75% { color: #3b4cca; } /* 75% color */
+  100% { color: #ffcb05; } /* End color */
 }

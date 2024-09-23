@@ -4,36 +4,42 @@ import Header from './Header';
 import Results from './Results';
 
 function GameLogic() {
-    const [difficulty, setDifficulty] = useState('');
-    const [score, setScore] = useState(0);
-    const [highScore, setHighScore] = useState(0);
-    const [gameStarted, setGameStarted] = useState(false);
-    const [gameOver, setGameOver] = useState(false);
-    const [numberOfCards, setNumberOfCards] = useState(0);
-    const [data, setData] = useState([]);
-    const [clickedPokemon, setClickedPokemon] = useState([]);
+    const [difficulty, setDifficulty] = useState(''); // State for game difficulty
+    const [score, setScore] = useState(0); // State for current score
+    const [highScore, setHighScore] = useState(0); // State for high score
+    const [gameStarted, setGameStarted] = useState(false); // State to track if the game has started
+    const [gameOver, setGameOver] = useState(false); // State to track if the game is over
+    const [numberOfCards, setNumberOfCards] = useState(0); // State for number of cards based on difficulty
+    const [data, setData] = useState([]); // State for card data
+    const [clickedPokemon, setClickedPokemon] = useState([]); // State for clicked Pokémon names
+    const [shuffling, setShuffling] = useState(false); // State to track if cards are shuffling
+    const [won, setWon] = useState(false); // State to track if the player won
+    const [loading, setLoading] = useState(false); // State to track if data is loading
 
+    // Fetch Pokémon card data when number of cards changes
     useEffect(() => {
         if (numberOfCards > 0) {
-            fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
+            setLoading(true);
+            fetch(`https://api.pokemontcg.io/v2/cards?pageSize=100`)
                 .then(response => response.json())
                 .then(json => {
-                    const shuffledData = json.results.sort(() => 0.5 - Math.random());
-                    const selectedData = shuffledData.slice(0, numberOfCards);
-                    return Promise.all(selectedData.map(pokemon => fetch(pokemon.url).then(res => res.json())));
-                })
-                .then(pokemonDetails => {
-                    const pokemonData = pokemonDetails.map(pokemon => ({
-                        name: pokemon.name,
-                        image: pokemon.sprites.front_default
+                    const allPokemonData = json.data.map(card => ({
+                        name: card.name,
+                        image: card.images.small
                     }));
-                    setData(pokemonData);
-                    console.log(pokemonData);
+                    const selectedPokemonData = shuffleArray(allPokemonData).slice(0, numberOfCards);
+                    setData(selectedPokemonData);
+                    setLoading(false);
+                    console.log(selectedPokemonData);
                 })
-                .catch(error => console.error(error));
+                .catch(error => {
+                    console.error(error);
+                    setLoading(false);
+                });
         }
     }, [numberOfCards]);
 
+    // Set number of cards based on difficulty
     useEffect(() => {
         switch (difficulty) {
             case 'easy':
@@ -52,36 +58,53 @@ function GameLogic() {
                 setGameStarted(true);
                 break;
             default:
-                setGameStarted(false);
                 break;
         }
     }, [difficulty]);
 
+    // Update high score if game is over and current score is higher
     useEffect(() => {
-        if (score === numberOfCards && gameStarted) {
-            setGameOver(true);
-            if (score > highScore) {
-                setHighScore(score);
-            }
-        }});
+        if (gameOver && score > highScore) {
+            setHighScore(score);
+        }
+    }, [gameOver, score, highScore]);
 
-    const handleCardClick = (pokemonName) => {
-        if (clickedPokemon.includes(pokemonName)) {
+    // Handle card click event
+    const handleCardClick = (name) => {
+        if (clickedPokemon.includes(name)) {
             setGameOver(true);
-            if (score > highScore) {
-                setHighScore(score);
-            }
+            setWon(false);
         } else {
-            setClickedPokemon(prevClicked => [...prevClicked, pokemonName]);
-            setScore(prevScore => prevScore + 1);
-            shuffleCards();
+            setClickedPokemon([...clickedPokemon, name]);
+            setScore(score + 1);
+            if (clickedPokemon.length + 1 === numberOfCards) {
+                setGameOver(true);
+                setWon(true);
+            } else {
+                triggerShuffle();
+            }
         }
     };
 
-    const shuffleCards = () => {
-        setData(prevData => [...prevData].sort(() => 0.5 - Math.random()));
+    // Trigger card shuffle animation
+    const triggerShuffle = () => {
+        setShuffling(true);
+        setTimeout(() => {
+            setData(shuffleArray([...data]));
+            setShuffling(false);
+        }, 600);
     };
 
+    // Shuffle array elements
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    };
+
+    // Restart the game
     const restartGame = () => {
         setGameOver(false);
         setGameStarted(false);
@@ -89,34 +112,40 @@ function GameLogic() {
         setNumberOfCards(0);
         setScore(0);
         setClickedPokemon([]);
+        setWon(false);
     };
 
     return (
         <>
             <Header score={score} highScore={highScore} />
 
-            {!gameStarted && (
+            {!gameStarted && !gameOver && (
                 <StartGame setDifficulty={setDifficulty} />
             )}
 
-            {gameStarted && !gameOver && (
-                <>
-                    <div>
-                        <button onClick={() => setScore(10)}>Set Score 10</button>
-                        <button onClick={() => setGameOver(true)}>Game Over</button>
-                    </div>
-                    <div>
-                        {data.map((pokemon, index) => (
-                            <div key={index} onClick={() => handleCardClick(pokemon.name)}>
-                                <img src={pokemon.image} alt={pokemon.name} />
+            {gameStarted && !gameOver && !loading && (
+                <div className={`card-container ${shuffling ? 'shuffling' : ''}`}>
+                    {data.map((pokemon, index) => (
+                        <div key={index} className={`card ${shuffling ? 'flipping' : ''}`} onClick={() => handleCardClick(pokemon.name)}>
+                            <div className="card-inner">
+                                <div className="card-front">
+                                    <img src={pokemon.image} alt={pokemon.name} />
+                                </div>
+                                <div className="card-back">
+                                    <img src="src/assets/cardback.png" alt="Pokemon Card Back" />
+                                </div>
                             </div>
-                        ))}
-                    </div>
-                </>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {loading && (
+                <div className="loading-text">Loading...</div>
             )}
 
             {gameOver && (
-                <Results restartGame={restartGame} />
+                <Results score={score} highScore={highScore} restartGame={restartGame} won={won} />
             )}
         </>
     );
